@@ -115,8 +115,8 @@ export default function LumaWithFaceTracking() {
           const centerY = face.y + face.height / 2;
 
           // ✅ 顔の位置に応じてカメラの移動を反転
-          const normalizedX = -(centerX / displaySize.width - 0.5) * 4;
-          const normalizedY = -(centerY / displaySize.width - 0.5) * 4;
+          const normalizedX = -(centerX / displaySize.width - 0.5) * 2;
+          const normalizedY = -(centerY / displaySize.width - 0.5) * 2;
           const normalizedZ = -(face.width / displaySize.width) * 8 + 4;
 
           targetPosition.current.set(normalizedX, normalizedY, 2);
