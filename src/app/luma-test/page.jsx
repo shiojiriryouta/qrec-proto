@@ -112,8 +112,8 @@ export default function LumaWithFaceTracking() {
           const centerY = face.y + face.height / 2;
 
           // ✅ 顔の位置に応じてカメラを水平・垂直移動
-          const normalizedX = -(0.5 - centerX / displaySize.width) * 1.5;
-          const normalizedY = -(centerY / displaySize.width - 0.5) * 1.5;
+          const normalizedX = -(0.5 - centerX / displaySize.width) * 0.5;
+          const normalizedY = -(centerY / displaySize.width - 0.5) * 0.5;
 
           // ✅ 顔の大きさを基にFOVを変化させる（50未満の値で制限）
           const faceSize = Math.min(face.width, face.height);
