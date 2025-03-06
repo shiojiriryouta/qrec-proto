@@ -121,7 +121,7 @@ export default function LumaWithFaceTracking() {
 
           if (cameraRef.current && controlsRef.current) {
             // ✅ カメラの位置をスムーズに更新
-            cameraRef.current.position.lerp(new Vector3(normalizedX, 2 + normalizedY, 3), 0.1);
+            cameraRef.current.position.lerp(new Vector3(normalizedX, 2 + normalizedY, 1.5), 0.1);
 
             // ✅ カメラの向きもスムーズに更新
             const targetX = controlsRef.current.target.x * 0.9 + normalizedX * 0.13;
