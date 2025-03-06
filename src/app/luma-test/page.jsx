@@ -37,7 +37,7 @@ export default function LumaWithFaceTracking() {
     controlsRef.current = controls;
 
     const splat = new LumaSplatsThree({
-      source: "https://lumalabs.ai/capture/f45a5f26-3b70-4bfa-9c7a-5d95a1df942f",
+      source: "https://lumalabs.ai/capture/665d64a7-d218-4b89-a5cd-208ff0552c1a",
     });
     scene.add(splat);
 
