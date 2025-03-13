@@ -124,7 +124,7 @@ export default function LumaWithFaceTracking() {
           if (cameraRef.current && controlsRef.current) {
             cameraRef.current.position.lerp(new Vector3(targetCameraX, targetCameraY, targetCameraZ), 0.02);
         
-            const smoothedTargetX = controlsRef.current.target.x * 0.9 + targetCameraX * 0.1;
+            const smoothedTargetX = -controlsRef.current.target.x * 0.9 + targetCameraX * 0.1;
             const smoothedTargetY = controlsRef.current.target.y * 0.9 + targetCameraY * 0.1;
         
             cameraRef.current.lookAt(new Vector3(smoothedTargetX, smoothedTargetY, 0));
