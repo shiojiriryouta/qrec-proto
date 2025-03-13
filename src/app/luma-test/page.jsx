@@ -21,7 +21,7 @@ export default function LumaWithFaceTracking() {
 
     const scene = new Scene();
     const camera = new PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 2, 3);
+    camera.position.set(0, 5, 7);
     cameraRef.current = camera;
 
     const renderer = new WebGLRenderer({
@@ -37,8 +37,9 @@ export default function LumaWithFaceTracking() {
     controlsRef.current = controls;
 
     const splat = new LumaSplatsThree({
-      source: "https://lumalabs.ai/capture/665d64a7-d218-4b89-a5cd-208ff0552c1a",
+      source: "https://lumalabs.ai/capture/8c21729b-eed9-479e-8d21-68c35035b47b",
     });
+    splat.position.set(0, 1, -5.0);
     scene.add(splat);
 
     const animate = () => {
@@ -105,36 +106,43 @@ export default function LumaWithFaceTracking() {
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         faceapi.draw.drawDetections(canvas, resizedDetections);
-
+      
         if (detections.length > 0) {
           const face = detections[0].box;
           const centerX = face.x + face.width / 2;
           const centerY = face.y + face.height / 2;
-
-          // ✅ 顔の位置に応じてカメラを水平・垂直移動
-          const normalizedX = -(0.5 - centerX / displaySize.width) * 0.5;
-          const normalizedY = -(centerY / displaySize.width - 0.5) * 0.5;
-
-          // ✅ 顔の大きさを基にFOVを変化させる（50未満の値で制限）
-          const faceSize = Math.min(face.width, face.height);
-          const targetFov = Math.min(40 + faceSize * 1.0, 50);
-
+        
+          // ✅ 正規化（-0.5 ~ 0.5 の範囲）
+          const normalizedX = (0.5 - centerX / displaySize.width) * 1.0;
+          const normalizedY = -(centerY / displaySize.height - 0.5) * 1.0;
+        
+          // ✅ カメラの位置を更新（顔の位置に応じてカメラを移動）
+          const targetCameraX = normalizedX * 2.0;
+          const targetCameraY = 2 + normalizedY * 1.5;
+          const targetCameraZ = 5.0 - Math.abs(normalizedX) * 1.5;
+        
           if (cameraRef.current && controlsRef.current) {
-            // ✅ カメラの位置をスムーズに更新
-            cameraRef.current.position.lerp(new Vector3(normalizedX, 2 + normalizedY, 1.5), 0.1);
-
-            // ✅ カメラの向きもスムーズに更新
-            const targetX = controlsRef.current.target.x * 0.9 + normalizedX * 0.13;
-            const targetY = controlsRef.current.target.y * 0.9 + normalizedY * 0.13;
-            controlsRef.current.target.set(targetX, targetY, 0);
+            cameraRef.current.position.lerp(new Vector3(targetCameraX, targetCameraY, targetCameraZ), 0.1);
+        
+            const smoothedTargetX = controlsRef.current.target.x * 0.9 + targetCameraX * 0.1;
+            const smoothedTargetY = controlsRef.current.target.y * 0.9 + targetCameraY * 0.1;
+        
+            cameraRef.current.lookAt(new Vector3(smoothedTargetX, smoothedTargetY, 0));
+        
+            controlsRef.current.target.set(smoothedTargetX, smoothedTargetY, 0);
             controlsRef.current.update();
-
-            // ✅ FOV をスムーズに変更
+        
+            // ✅ ここでFOVを変更（新規追加）
+            const faceSize = Math.min(face.width, face.height);
+            const targetFov = Math.min(40 + faceSize * 1.0, 50); // FOV: 40 〜 50
+        
             cameraRef.current.fov = cameraRef.current.fov * 0.9 + targetFov * 0.1;
-            cameraRef.current.updateProjectionMatrix(); // 変更を適用
+            cameraRef.current.updateProjectionMatrix();
           }
         }
-      }, 30); // ✅ 30msごとの更新で負荷軽減
+        
+      }, 30);
+      
     };
   }, [loading]);
 
